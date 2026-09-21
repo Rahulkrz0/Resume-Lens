@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 const { Resume } = require('./database');
 
 const resumesRoutes = require('./routes/resumes');
@@ -11,6 +12,7 @@ const emailRoutes = require('./routes/email');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
