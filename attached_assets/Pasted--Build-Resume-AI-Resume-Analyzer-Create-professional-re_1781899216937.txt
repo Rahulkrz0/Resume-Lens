@@ -1,0 +1,94 @@
+# Build Resume + AI Resume Analyzer
+
+Create professional resumes with multiple templates and color themes. Users can build a resume, customize its design, and get AI-powered feedback to improve their chances of getting hired.
+
+## Features
+
+### 1. Resume Builder
+
+* Create resumes easily with simple forms
+* Add personal details, education, skills, projects, experience, and achievements
+* Live preview while editing
+
+### 2. Multiple Templates & Colors
+
+* Choose from different modern resume templates
+* Select different color themes
+* Download resumes as PDF
+* Clean and ATS-friendly designs
+
+### 3. Resume Upload & Analysis
+
+* Upload an existing resume in PDF format
+* Automatically extract resume content for analysis
+
+### 4. Role-Based Evaluation
+
+Choose a target role:
+
+* Backend Developer
+* Frontend Developer
+* HR / Human Resources
+* Other (custom role)
+
+If no role is selected, AI evaluates the resume using general best practices.
+
+### 5. AI Resume Analysis
+
+AI provides:
+
+* Resume score (out of 100)
+* Strengths of the resume
+* Missing skills and sections
+* Content and keyword suggestions
+* ATS-friendly feedback
+* Actionable improvement tips
+
+### 6. Processing Experience
+
+Show loading messages while AI is working:
+
+* "Analyzing your resume..."
+* "Scoring your resume..."
+* "Generating detailed feedback..."
+
+After completion:
+
+* Display the resume score instantly
+* Show success confirmation after email delivery
+
+### 7. Email Report Automation
+
+Generate a professional resume analysis report and send it automatically via Gmail.
+
+The email includes:
+
+* Resume score
+* Role-based feedback
+* Strengths and weaknesses
+* Missing skills
+* Improvement suggestions
+* Final recommendation
+
+Display message:
+📩 Your detailed resume report has been sent to your email successfully.
+
+## Tech Stack
+
+* Replit (Full Stack)
+* React + Tailwind CSS
+* PDF Upload & Extraction
+* OpenAI or Gemini API
+* Gmail Integration
+* Multiple Resume Templates & Themes
+
+## Target Users
+
+* Students
+* Freshers
+* Job Seekers
+* Developers preparing for interviews
+
+## Goal
+
+Help users create beautiful resumes, customize them with different templates and colors, analyze their resumes using AI, instantly see their score, and receive a detailed improvement report through email.

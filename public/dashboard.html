@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Resume Lens</title>
+    <script src="/js/theme.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar">
+            <!-- Injected via common.js -->
+        </aside>
+
+        <main class="main-content">
+            <div class="d-flex justify-between align-center mb-4">
+                <h1>My <span class="text-gradient">Dashboard</span></h1>
+                <p class="text-muted" id="userGreeting">Welcome back!</p>
+            </div>
+
+            <!-- Features section moved to the bottom -->
+
+            <div class="grid-3 mb-4">
+                <div class="card stat-card">
+                    <h3 class="text-muted">Total Resumes</h3>
+                    <div class="stat-value" id="statTotal">-</div>
+                </div>
+                <div class="card stat-card">
+                    <h3 class="text-muted">Average ATS Score</h3>
+                    <div class="stat-value" id="statAvg">-</div>
+                </div>
+                <div class="card stat-card">
+                    <h3 class="text-muted">Analyzed Resumes</h3>
+                    <div class="stat-value" id="statAnalyzed">-</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Recent Activity</h2>
+                <div id="recentActivityList">
+                    <p class="text-muted">Loading activities...</p>
+                </div>
+            </div>
+
+            <!-- Resume Lens Description & Features Hero -->
+            <div class="card mt-4 mb-4" style="background: rgba(15, 23, 42, 0.3); border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 2rem;">
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <h2 style="font-size: 2rem; margin-bottom: 0.5rem;">Welcome to <span class="text-gradient">Resume Lens</span></h2>
+                    <p class="text-muted" style="font-size: 1.1rem; max-width: 700px; margin: 0 auto;">Your ultimate AI-powered platform to build, analyze, and flawlessly optimize your resume to beat Applicant Tracking Systems (ATS) and land your dream job.</p>
+                </div>
+                
+                <div class="grid-3" style="gap: 2rem; align-items: stretch;">
+                    <div style="text-align: center;">
+                        <img src="/images/feature_upload.jpg" alt="Upload Resume" style="width: 100%; border-radius: 12px; margin-bottom: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.4); border: 1px solid var(--border-color);">
+                        <h3 style="margin-bottom: 0.5rem; color: var(--brand-cta);">1. Upload & Scan</h3>
+                        <p class="text-muted" style="font-size: 0.95rem;">Upload your existing PDF resume. Our system extracts the text and structure exactly how a real enterprise ATS does.</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <img src="/images/feature_insights.jpg" alt="AI Insights" style="width: 100%; border-radius: 12px; margin-bottom: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.4); border: 1px solid var(--border-color);">
+                        <h3 style="margin-bottom: 0.5rem; color: var(--brand-cta);">2. AI Actionable Insights</h3>
+                        <p class="text-muted" style="font-size: 0.95rem;">Get a strict, highly accurate ATS score powered by Gemini. Discover missing keywords, structural errors, and get actionable tips.</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <img src="/images/feature_builder.jpg" alt="Resume Builder" style="width: 100%; border-radius: 12px; margin-bottom: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.4); border: 1px solid var(--border-color);">
+                        <h3 style="margin-bottom: 0.5rem; color: var(--brand-cta);">3. Pro Resume Builder</h3>
+                        <p class="text-muted" style="font-size: 0.95rem;">Need a fresh start? Use our intelligent Resume Builder to craft a flawlessly formatted, perfectly parseable PDF from scratch.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deep Dive Section -->
+            <div class="card" style="background: linear-gradient(135deg, rgba(30,27,75,0.8) 0%, rgba(15,23,42,0.95) 100%); border: 1px solid var(--border-color); position: relative; overflow: hidden; padding: 3rem; margin-bottom: 2rem;">
+                <!-- Decorative SVG Rings (similar to image) -->
+                <svg style="position: absolute; bottom: -50px; left: -50px; opacity: 0.2; pointer-events: none;" width="200" height="200" viewBox="0 0 200 200">
+                    <circle cx="0" cy="200" r="150" fill="none" stroke="var(--brand-cta)" stroke-width="2"/>
+                    <circle cx="0" cy="200" r="180" fill="none" stroke="var(--brand-cta)" stroke-width="2"/>
+                    <circle cx="0" cy="200" r="210" fill="none" stroke="var(--brand-cta)" stroke-width="2"/>
+                </svg>
+                <svg style="position: absolute; bottom: -50px; right: -50px; opacity: 0.2; pointer-events: none;" width="200" height="200" viewBox="0 0 200 200">
+                    <circle cx="200" cy="200" r="150" fill="none" stroke="var(--brand-accent)" stroke-width="2"/>
+                    <circle cx="200" cy="200" r="180" fill="none" stroke="var(--brand-accent)" stroke-width="2"/>
+                    <circle cx="200" cy="200" r="210" fill="none" stroke="var(--brand-accent)" stroke-width="2"/>
+                </svg>
+
+                <div style="position: relative; z-index: 1; text-align: center; max-width: 900px; margin: 0 auto;">
+                    <h2 style="font-size: 2.2rem; margin-bottom: 1rem; color: #fff;">The AI-powered Resume Checker goes beyond typos and punctuation</h2>
+                    <p style="color: #cbd5e1; font-size: 1.1rem; line-height: 1.7; margin-bottom: 3rem;">
+                        Built entirely on advanced Gemini AI architecture, our system meticulously evaluates your resume against the exact same logic used by enterprise Applicant Tracking Systems (ATS). We analyze your document across dozens of critical categories to ensure recruiters and hiring managers actually see your application. Our two-tier system first guarantees mechanical parseability, and then performs a deep semantic analysis to measure the true impact of your career achievements.
+                    </p>
+                    
+                    <div class="grid-3" style="gap: 1.5rem; text-align: left;">
+                        <!-- Card 1 -->
+                        <div class="card" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(139, 92, 246, 0.3);">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; color: var(--brand-accent);">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                <h3 style="margin: 0; color: #fff; font-size: 1.1rem;">ATS Passability</h3>
+                            </div>
+                            <ul style="list-style: none; padding: 0; margin: 0; color: #94a3b8; font-size: 0.95rem;">
+                                <li style="margin-bottom: 0.5rem;">✓ File format and size</li>
+                                <li style="margin-bottom: 0.5rem;">✓ ATS-friendly design</li>
+                                <li style="margin-bottom: 0.5rem;">✓ Parseable text extraction</li>
+                                <li>✓ Standardized font mapping</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Card 2 -->
+                        <div class="card" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(139, 92, 246, 0.3);">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; color: var(--brand-accent);">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                                <h3 style="margin: 0; color: #fff; font-size: 1.1rem;">Content & Impact</h3>
+                            </div>
+                            <ul style="list-style: none; padding: 0; margin: 0; color: #94a3b8; font-size: 0.95rem;">
+                                <li style="margin-bottom: 0.5rem;">✓ Action verb utilization</li>
+                                <li style="margin-bottom: 0.5rem;">✓ Quantifiable achievements</li>
+                                <li style="margin-bottom: 0.5rem;">✓ Spelling and grammar</li>
+                                <li>✓ Bullet length consistency</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Card 3 -->
+                        <div class="card" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(139, 92, 246, 0.3);">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; color: var(--brand-accent);">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                                <h3 style="margin: 0; color: #fff; font-size: 1.1rem;">Formatting & Flags</h3>
+                            </div>
+                            <ul style="list-style: none; padding: 0; margin: 0; color: #94a3b8; font-size: 0.95rem;">
+                                <li style="margin-bottom: 0.5rem;">✓ Visual readability</li>
+                                <li style="margin-bottom: 0.5rem;">✓ Missing core sections</li>
+                                <li style="margin-bottom: 0.5rem;">✓ Date logic validation</li>
+                                <li>✓ Contact info verification</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Card 4 -->
+                        <div class="card" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(139, 92, 246, 0.3);">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; color: var(--brand-accent);">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                <h3 style="margin: 0; color: #fff; font-size: 1.1rem;">Job Tailoring</h3>
+                            </div>
+                            <ul style="list-style: none; padding: 0; margin: 0; color: #94a3b8; font-size: 0.95rem;">
+                                <li style="margin-bottom: 0.5rem;">✓ Hard skills matching</li>
+                                <li style="margin-bottom: 0.5rem;">✓ Soft skills validation</li>
+                                <li style="margin-bottom: 0.5rem;">✓ Keyword optimization</li>
+                                <li>✓ Role relevance scoring</li>
+                            </ul>
+                        </div>
+            
+                        <!-- Card 5 -->
+                        <div class="card" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(139, 92, 246, 0.3);">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; color: var(--brand-accent);">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                                <h3 style="margin: 0; color: #fff; font-size: 1.1rem;">Seniority & Impact</h3>
+                            </div>
+                            <ul style="list-style: none; padding: 0; margin: 0; color: #94a3b8; font-size: 0.95rem;">
+                                <li style="margin-bottom: 0.5rem;">✓ Career progression logic</li>
+                                <li style="margin-bottom: 0.5rem;">✓ Leadership signals</li>
+                                <li style="margin-bottom: 0.5rem;">✓ Scope of responsibility</li>
+                                <li>✓ Promotion tracking</li>
+                            </ul>
+                        </div>
+            
+                        <!-- Card 6 -->
+                        <div class="card" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(139, 92, 246, 0.3);">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; color: var(--brand-accent);">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                <h3 style="margin: 0; color: #fff; font-size: 1.1rem;">Risk & Discrimination</h3>
+                            </div>
+                            <ul style="list-style: none; padding: 0; margin: 0; color: #94a3b8; font-size: 0.95rem;">
+                                <li style="margin-bottom: 0.5rem;">✓ Age and date bias</li>
+                                <li style="margin-bottom: 0.5rem;">✓ Employment gaps</li>
+                                <li style="margin-bottom: 0.5rem;">✓ Unprofessional language</li>
+                                <li>✓ Overused buzzwords</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Footer -->
+            <footer style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-muted);">
+                <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="url(#logoGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    <span style="font-weight: 600; font-size: 1.1rem; color: var(--text-color);">Resume Lens</span>
+                </div>
+                <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">&copy; 2026 Resume Lens. All rights reserved.</p>
+                <div style="display: flex; justify-content: center; gap: 1.5rem; font-size: 0.85rem;">
+                    <a href="#" style="color: var(--text-muted); text-decoration: none;" onmouseover="this.style.color='var(--brand-cta)'" onmouseout="this.style.color='var(--text-muted)'">Privacy Policy</a>
+                    <a href="#" style="color: var(--text-muted); text-decoration: none;" onmouseover="this.style.color='var(--brand-cta)'" onmouseout="this.style.color='var(--text-muted)'">Terms of Service</a>
+                    <a href="#" style="color: var(--text-muted); text-decoration: none;" onmouseover="this.style.color='var(--brand-cta)'" onmouseout="this.style.color='var(--text-muted)'">Contact Us</a>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="/js/common.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

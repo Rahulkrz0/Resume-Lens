@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyze Resume - Resume Lens</title>
+    <script src="/js/theme.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar">
+            <!-- Injected via common.js -->
+        </aside>
+
+        <main class="main-content">
+            <h1>Analyze <span class="text-gradient">Resume</span></h1>
+            <p class="text-muted mb-4">Upload a new resume or select an existing one to get AI-powered feedback.</p>
+
+            <div class="card">
+                <form id="analyzeForm" onsubmit="handleAnalyze(event)">
+                    
+                    <div class="form-group mb-4">
+                        <label class="form-label">1. Select Resume</label>
+                        <div class="d-flex gap-4" style="margin-bottom: 1rem;">
+                            <label style="display:flex; align-items:center; gap:0.5rem;">
+                                <input type="radio" name="resumeSource" value="existing" checked onchange="toggleSource()"> 
+                                Existing Resume
+                            </label>
+                            <label style="display:flex; align-items:center; gap:0.5rem;">
+                                <input type="radio" name="resumeSource" value="upload" onchange="toggleSource()"> 
+                                Upload New
+                            </label>
+                        </div>
+                        
+                        <div id="existingSource">
+                            <select id="resumeSelect" class="form-control">
+                                <option value="">Loading resumes...</option>
+                            </select>
+                        </div>
+
+                        <div id="uploadSource" style="display: none;">
+                            <div style="display: flex; gap: 10px;">
+                                <input type="file" id="resumeFile" accept="application/pdf" class="form-control" onchange="handleAutoUpload()">
+                            </div>
+                            <div id="uploadStatus" style="display:none; margin-top: 0.5rem; font-weight: 500; color: var(--text-color);"></div>
+                            <div id="uploadSuccess" class="success-message" style="display:none; color: var(--success-color); margin-top: 0.5rem; font-weight: 500;"></div>
+                            <div id="uploadError" class="error-message"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label class="form-label">2. Target Role (Optional)</label>
+                        <input type="text" id="targetRole" class="form-control" placeholder="e.g. Software Engineer">
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label class="form-label">3. Job Description (Optional)</label>
+                        <textarea id="jobDescription" class="form-control" rows="5" placeholder="Paste the job description here for a tailored match analysis..."></textarea>
+                    </div>
+
+                    <div id="analyzeError" class="error-message"></div>
+
+                    <div class="mt-4">
+                        <button type="submit" id="analyzeBtn" class="btn btn-primary" style="padding: 0.75rem 2rem; font-size: 1.1rem;">
+                            Analyze Resume
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <div id="global-loading" class="loading-overlay">
+        <div class="diamond-loader">
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+        </div>
+        <p class="loading-text">Analyzing...</p>
+    </div>
+
+    <script src="/js/common.js"></script>
+    <script src="/js/analyze.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Resumes - Resume Lens</title>
+    <script src="/js/theme.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar">
+            <!-- Injected via common.js -->
+        </aside>
+
+        <main class="main-content">
+            <div class="d-flex justify-between align-center mb-4">
+                <h1>My <span class="text-gradient">Resumes</span></h1>
+                <a href="/analyze.html" class="btn btn-primary">Upload New Resume</a>
+            </div>
+
+            <div id="resumesGrid" class="grid-3">
+                <p class="text-muted">Loading resumes...</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Rename Modal Overlay -->
+    <div id="renameModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
+        <div class="card" style="width: 100%; max-width: 400px;">
+            <h2>Rename Resume</h2>
+            <div class="form-group">
+                <input type="text" id="renameInput" class="form-control" placeholder="New name (e.g. My_Resume.pdf)">
+            </div>
+            <div class="d-flex gap-2 mt-4" style="justify-content: flex-end;">
+                <button class="btn btn-outline" onclick="closeRenameModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="submitRename()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/common.js"></script>
+    <script src="/js/resumes.js"></script>
+</body>
+</html>

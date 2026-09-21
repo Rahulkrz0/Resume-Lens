@@ -1,0 +1,462 @@
+Act as a senior full-stack engineer, UI/UX designer, and product architect.
+
+I have an existing Resume Analyzer web application. Do NOT rebuild the entire project from scratch. First inspect the complete existing codebase, understand the current architecture, components, API flow, database/storage logic, Gemini AI integration, dashboard, resume upload flow, and naming/branding.
+
+Then improve the existing application professionally.
+
+IMPORTANT:
+The application should look like a real independently developed SaaS product, NOT like a Replit-generated/demo project. Remove any visible traces, wording, comments, default placeholders, branding, metadata, filenames, or UI patterns that make it look like it was generated or hosted from Replit.
+
+==================================================
+1. COMPLETE RESUME ANALYSIS
+==================================================
+
+When a user uploads a resume and clicks "Analyze", perform a COMPLETE resume analysis using the configured Gemini API.
+
+The analysis must evaluate:
+
+- Resume content
+- Resume structure
+- Formatting
+- ATS compatibility
+- Contact information
+- Professional summary
+- Skills
+- Education
+- Work experience
+- Projects
+- Certifications
+- Achievements
+- Keywords
+- Action verbs
+- Quantifiable achievements
+- Grammar and spelling
+- Section organization
+- Resume length
+- Readability
+- Consistency
+- Date formatting
+- Bullet-point quality
+- Technical skills
+- Missing important information
+- Potential ATS parsing issues
+
+Do NOT generate fake/mock analysis data.
+
+Every score and recommendation shown in the UI must come from the actual uploaded resume analysis.
+
+If Gemini/API fails, show a clear error state instead of displaying fake scores.
+
+==================================================
+2. TWO DIFFERENT ANALYSIS MODES
+==================================================
+
+Add two clearly separated analysis options.
+
+A) GENERAL ATS SCORE
+
+Create a dedicated section called:
+
+"ATS Score"
+
+This score must analyze ONLY the resume itself.
+
+It must NOT depend on:
+- Target job role
+- Job description
+- Selected company
+- Specific vacancy
+- Job title
+
+The ATS score should evaluate how well the resume can be parsed and understood by Applicant Tracking Systems.
+
+Show:
+
+- Overall ATS Score / 100
+- ATS compatibility
+- Formatting score
+- Content score
+- Keyword/readability score
+- Section structure score
+- Contact information score
+- Major ATS issues
+- Minor ATS issues
+- Specific recommendations
+
+Example:
+
+ATS SCORE
+82/100
+
+Formatting        18/20
+Content           17/20
+Structure         19/20
+Keywords          14/20
+ATS Compatibility 14/20
+
+The scoring logic should be consistent and explainable.
+
+B) TARGET ROLE ANALYSIS
+
+Keep the existing role-based analysis as a separate feature.
+
+When the user provides:
+- Target Role
+- Job Description
+
+the application should perform a second analysis specifically comparing the resume against that role/JD.
+
+Clearly label this as:
+
+"Job Match Analysis"
+
+Do NOT mix the general ATS score with the target-role score.
+
+==================================================
+3. DASHBOARD MUST UPDATE AUTOMATICALLY
+==================================================
+
+This is very important.
+
+Currently the dashboard shows:
+
+Total Resumes
+Average Score -
+Analyzed 0
+
+even after analysis.
+
+Fix the entire data flow.
+
+After a resume is successfully analyzed:
+
+- Total Resumes should update
+- Analyzed count should update
+- Average Score should update
+- Latest ATS score should be available
+- Recent Activity should update
+- Analysis date/time should update
+- Resume name should update
+- Analysis history should update
+
+The dashboard must NOT require a manual refresh.
+
+Use proper state management and persistent storage/database logic.
+
+The dashboard should remain correct even if the user:
+1. Logs out
+2. Logs back in
+3. Refreshes the browser
+4. Opens the application on another session
+
+Do not use temporary frontend-only variables for permanent statistics.
+
+Create a reliable data relationship between:
+
+User
+↓
+Resume
+↓
+Analysis
+↓
+ATS Score / Job Match Score
+↓
+Dashboard statistics
+
+Make sure scores are calculated from actual stored analysis records.
+
+==================================================
+4. HISTORY SECTION
+==================================================
+
+Improve the History page.
+
+Each analysis should display:
+
+- Resume name
+- Analysis date
+- ATS score
+- Job Match score if available
+- Target role if used
+- Analysis status
+- View Report button
+- Delete option
+
+Clicking "View Report" should open the exact stored analysis.
+
+Do NOT run Gemini again just to display an old report.
+
+==================================================
+5. MY RESUMES SECTION
+==================================================
+
+Improve the resume management page.
+
+Each resume card should contain:
+
+- Resume name
+- Upload date
+- Last analyzed date
+- ATS score
+- Analysis status
+- View
+- Analyze
+- Edit/Rename
+- Delete
+
+Use clean professional cards/table layout.
+
+==================================================
+6. FILE NAME / BRANDING CLEANUP
+==================================================
+
+The application should look like a professionally developed independent product.
+
+Search the COMPLETE codebase for:
+
+- Replit
+- Replit-generated names
+- Replit branding
+- "client"
+- "client file"
+- "Replit"
+- generic generated filenames
+- developer/debug wording
+- placeholder names
+
+Do not blindly rename variables if doing so can break functionality.
+
+For user-facing filenames, generated reports, downloaded files, emails and uploaded resume references, use professional user-specific naming.
+
+For example:
+
+BAD:
+client.pdf
+client_resume.pdf
+replit_resume.pdf
+generated-report.pdf
+
+GOOD:
+Rahul_Kumar_Gupta_Resume.pdf
+Rahul_Kumar_Gupta_ATS_Report.pdf
+Rahul_Kumar_Gupta_Resume_Analysis.pdf
+
+The filename should be generated dynamically from the authenticated user's name or the resume owner's name.
+
+Do NOT expose internal IDs, database IDs, random UUIDs, "client", or Replit-related names to users.
+
+Also check browser title, favicon metadata, email templates, PDF/report names, download names, UI text and page metadata.
+
+==================================================
+7. PROFESSIONAL UI/UX
+==================================================
+
+The current interface is functional but should feel more like a polished SaaS product.
+
+Maintain the current dark theme but improve:
+
+- Typography
+- Spacing
+- Card hierarchy
+- Button consistency
+- Icons
+- Empty states
+- Loading states
+- Error states
+- Hover effects
+- Score visualization
+- Responsive design
+- Sidebar navigation
+- Dashboard statistics
+
+Avoid excessive animations.
+
+Use subtle professional transitions.
+
+The interface should feel similar to a modern premium productivity/SaaS application.
+
+Do not make it look like a template.
+
+==================================================
+8. ANALYSIS REPORT UI
+==================================================
+
+Create a professional analysis report with:
+
+Header:
+Resume name
+Analysis date
+Overall ATS Score
+
+Then:
+
+1. ATS Score Overview
+2. Score Breakdown
+3. Resume Strengths
+4. Critical Issues
+5. Improvement Recommendations
+6. Section-by-Section Analysis
+7. Formatting & ATS Compatibility
+8. Skills Analysis
+9. Experience Analysis
+10. Projects Analysis
+11. Education & Certifications
+12. Keyword Analysis
+13. Job Match Analysis (only when target role/JD is provided)
+
+Use visual score indicators, progress bars, badges and clean cards.
+
+Make the report easy to understand for a student/job seeker.
+
+==================================================
+9. GEMINI AI IMPLEMENTATION
+==================================================
+
+Use the existing Gemini API configuration.
+
+Do NOT expose the API key on the frontend.
+
+Keep API calls server-side.
+
+Create a structured JSON response from Gemini instead of relying on unstructured text.
+
+Validate Gemini's response before saving it.
+
+If Gemini returns invalid JSON or incomplete fields:
+- handle the error
+- retry safely if appropriate
+- otherwise show an error
+- NEVER insert fake/default scores
+
+Use a robust schema for analysis results.
+
+==================================================
+10. LOADING EXPERIENCE
+==================================================
+
+When analysis starts, show a professional analysis progress UI.
+
+Example:
+
+Uploading Resume
+✓ Resume uploaded
+
+Extracting Content
+✓ Content extracted
+
+Analyzing Resume
+● Gemini AI is analyzing your resume...
+
+Calculating ATS Score
+○ Processing...
+
+Generating Recommendations
+○ Waiting...
+
+Do not fake progress for an unnecessarily long time.
+
+The progress UI should reflect actual stages where possible.
+
+==================================================
+11. ERROR HANDLING
+==================================================
+
+Handle:
+
+- Invalid PDF
+- Empty resume
+- Corrupted file
+- Gemini API failure
+- API timeout
+- Invalid AI response
+- Database failure
+- Upload failure
+- Authentication failure
+
+Show user-friendly messages.
+
+Never show raw stack traces or API keys.
+
+==================================================
+12. DATA CONSISTENCY
+==================================================
+
+Audit the entire application for:
+
+- Frontend/backend mismatch
+- Incorrect API responses
+- Missing database writes
+- Incorrect score calculations
+- Dashboard state bugs
+- History synchronization problems
+- Duplicate analyses
+- Race conditions
+- Stale state
+- Refresh-related data loss
+
+Fix the root cause instead of adding frontend hacks.
+
+==================================================
+13. AUTHENTICATION & USER DATA
+==================================================
+
+Every resume and analysis must belong to the authenticated user.
+
+User A must never be able to see User B's:
+
+- Resumes
+- ATS reports
+- Analysis history
+- Scores
+- Personal information
+
+Verify authorization on the backend, not only in the frontend.
+
+==================================================
+14. QUALITY CHECK BEFORE FINISHING
+==================================================
+
+After implementing everything:
+
+1. Run the application.
+2. Upload a real PDF resume.
+3. Verify extraction.
+4. Run General ATS Analysis.
+5. Verify actual Gemini response.
+6. Verify ATS score.
+7. Verify dashboard statistics.
+8. Refresh the page.
+9. Verify data remains.
+10. Open History.
+11. Open the saved report.
+12. Test Job Match Analysis separately.
+13. Verify dashboard distinguishes ATS Score and Job Match Score.
+14. Test logout/login.
+15. Test invalid PDF.
+16. Test Gemini/API failure.
+17. Check responsive layout.
+18. Search the complete codebase for Replit branding or user-facing "client" filenames.
+19. Remove debug logs and development placeholders.
+20. Make sure there are NO fake/mock scores or fake analysis results.
+
+IMPORTANT:
+Do not simply modify the UI to make it look correct.
+
+Trace the actual data flow from:
+
+UPLOAD
+→ TEXT EXTRACTION
+→ GEMINI ANALYSIS
+→ STRUCTURED RESULT
+→ DATABASE
+→ HISTORY
+→ DASHBOARD
+→ REPORT
+
+Fix every broken connection in this flow.
+
+Do not break existing working features.
+
+Before making major architectural changes, inspect the current implementation and reuse existing components/services where appropriate.
+
+The final result should feel like a production-ready independent Resume Analyzer SaaS product built by a professional development team.

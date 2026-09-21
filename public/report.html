@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Report - Resume Lens</title>
+    <script src="/js/theme.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .report-section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .report-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .list-items {
+            list-style-type: none;
+            padding: 0;
+        }
+        .list-items li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .list-items.positive li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--success-color);
+            font-weight: bold;
+        }
+        .list-items.negative li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--error-color);
+            font-weight: bold;
+        }
+        .list-items.neutral li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--brand-cta);
+            font-weight: bold;
+        }
+        
+        @media print {
+            .sidebar, .print-hide { display: none !important; }
+            .main-content { padding: 0 !important; width: 100% !important; max-width: none !important; }
+            body { background: white; color: black; }
+            .card { box-shadow: none; border: 1px solid #ddd; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar">
+            <!-- Injected via common.js -->
+        </aside>
+
+        <main class="main-content">
+            <div class="d-flex justify-between align-center mb-4 print-hide">
+                <h1>Analysis <span class="text-gradient">Report</span></h1>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline" onclick="openEmailModal()">Send to Email</button>
+                    <button class="btn btn-outline" onclick="window.print()">Print / Save PDF</button>
+                    <a href="/analyze.html" class="btn btn-primary">New Analysis</a>
+                </div>
+            </div>
+
+            <div id="reportContent">
+                <p class="text-muted">Loading report...</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Email Modal -->
+    <div id="emailModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
+        <div class="card" style="width: 100%; max-width: 400px;">
+            <h2>Send ATS Report</h2>
+            <p id="emailReportName" class="text-muted" style="margin-top:-0.5rem; margin-bottom: 1rem; font-size: 0.9rem;"></p>
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" id="emailInput" class="form-control" placeholder="user@example.com">
+            </div>
+            <div id="emailMessage" style="margin-top:0.5rem; font-size:0.875rem;"></div>
+            <div class="d-flex gap-2 mt-4" style="justify-content: flex-end;">
+                <button class="btn btn-outline" onclick="closeEmailModal()">Cancel</button>
+                <button class="btn btn-primary" id="emailSendBtn" onclick="sendEmailReport()">Send Report</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="global-loading" class="loading-overlay">
+        <div class="diamond-loader">
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+        </div>
+        <p class="loading-text">Processing...</p>
+    </div>
+
+    <script src="/js/common.js"></script>
+    <script src="/js/report.js"></script>
+</body>
+</html>

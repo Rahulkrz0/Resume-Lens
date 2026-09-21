@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder - Resume Lens</title>
+    <script src="/js/theme.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .builder-layout {
+            display: flex;
+            height: calc(100vh - 4rem);
+            gap: 2rem;
+        }
+        .builder-form {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 1rem;
+        }
+        .builder-preview {
+            flex: 1;
+            background: #fff;
+            color: #000;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            font-size: 11pt;
+            border: 1px solid var(--border-color);
+        }
+        .builder-section {
+            background-color: var(--surface-color);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+        .builder-section h2 { margin-bottom: 1rem; font-size: 1.25rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;}
+        .dynamic-item {
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            background-color: var(--bg-color);
+        }
+        .preview-header { text-align: center; margin-bottom: 20px; }
+        .preview-header h1 { margin:0; font-size: 24pt; color: #111; border-bottom: none;}
+        .preview-contact { font-size: 10pt; color: #555; }
+        .preview-section { margin-bottom: 15px; }
+        .preview-section h2 { font-size: 14pt; color: #222; border-bottom: 1px solid #ccc; text-transform: uppercase; margin-bottom: 10px; margin-top: 15px;}
+        .preview-item { margin-bottom: 10px; }
+        .preview-item-header { display: flex; justify-content: space-between; font-weight: bold; }
+        .ai-btn { padding: 0.25rem 0.5rem; font-size: 0.8rem; margin-top: 0.5rem; }
+        
+        @media (max-width: 768px) {
+            .builder-layout { flex-direction: column; height: auto; }
+            .builder-preview { display: none; } /* On mobile, we can toggle this */
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar">
+            <!-- Injected via common.js -->
+        </aside>
+
+        <main class="main-content" style="padding: 2rem;">
+            <div class="d-flex justify-between align-center mb-4">
+                <h1>Create <span class="text-gradient">Resume</span></h1>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline" onclick="saveResume(false)">Save Draft</button>
+                    <button class="btn btn-primary" onclick="saveResume(true)">Save & Download PDF</button>
+                </div>
+            </div>
+
+            <div class="builder-layout">
+                <div class="builder-form" id="builderForm">
+                    
+                    <div class="builder-section">
+                        <h2>Personal Information</h2>
+                        <div class="form-group"><label class="form-label">Full Name</label><input type="text" id="p_name" class="form-control" oninput="updatePreview()"></div>
+                        <div class="grid-2">
+                            <div class="form-group"><label class="form-label">Email</label><input type="email" id="p_email" class="form-control" oninput="updatePreview()"></div>
+                            <div class="form-group"><label class="form-label">Phone</label><input type="text" id="p_phone" class="form-control" oninput="updatePreview()"></div>
+                        </div>
+                        <div class="form-group"><label class="form-label">Location</label><input type="text" id="p_location" class="form-control" oninput="updatePreview()"></div>
+                        <div class="grid-2">
+                            <div class="form-group"><label class="form-label">LinkedIn</label><input type="text" id="p_linkedin" class="form-control" oninput="updatePreview()"></div>
+                            <div class="form-group"><label class="form-label">GitHub</label><input type="text" id="p_github" class="form-control" oninput="updatePreview()"></div>
+                        </div>
+                    </div>
+
+                    <div class="builder-section">
+                        <h2>Professional Summary</h2>
+                        <div class="form-group">
+                            <textarea id="p_summary" class="form-control" rows="4" oninput="updatePreview()"></textarea>
+                            <button class="btn btn-outline ai-btn" onclick="improveText('p_summary', 'summary')">✨ Improve with AI</button>
+                        </div>
+                    </div>
+
+                    <div class="builder-section">
+                        <h2>Experience</h2>
+                        <div id="experienceList"></div>
+                        <button class="btn btn-outline" onclick="addExperience()">+ Add Experience</button>
+                    </div>
+
+                    <div class="builder-section">
+                        <h2>Education</h2>
+                        <div id="educationList"></div>
+                        <button class="btn btn-outline" onclick="addEducation()">+ Add Education</button>
+                    </div>
+
+                    <div class="builder-section">
+                        <h2>Projects</h2>
+                        <div id="projectList"></div>
+                        <button class="btn btn-outline" onclick="addProject()">+ Add Project</button>
+                    </div>
+
+                    <div class="builder-section">
+                        <h2>Skills</h2>
+                        <div class="form-group">
+                            <label class="form-label">Comma separated (e.g. Java, Python, React)</label>
+                            <textarea id="p_skills" class="form-control" rows="2" oninput="updatePreview()"></textarea>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="builder-preview" id="livePreview">
+                    <!-- Dynamic Preview Content -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="global-loading" class="loading-overlay">
+        <div class="diamond-loader">
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+            <div class="diamond"></div>
+        </div>
+        <p class="loading-text">Processing...</p>
+    </div>
+
+    <script src="/js/common.js"></script>
+    <script src="/js/builder.js"></script>
+</body>
+</html>
