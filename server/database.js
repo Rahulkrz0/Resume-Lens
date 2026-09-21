@@ -1,63 +1,64 @@
-const sqlite3 = require('sqlite3').verbose();
-const { open } = require('sqlite');
-const path = require('path');
-const fs = require('fs');
+const mongoose = require('mongoose');
 
-const dbPath = process.env.DATABASE_PATH || path.join(__dirname, '../database/resume-analyzer.db');
-const dbDir = path.dirname(dbPath);
-if (!fs.existsSync(dbDir)) {
-    fs.mkdirSync(dbDir, { recursive: true });
-}
-
-let dbInstance = null;
-
+// Connect to MongoDB
 async function initDb() {
-    dbInstance = await open({
-        filename: dbPath,
-        driver: sqlite3.Database
-    });
-
-    await dbInstance.exec(`
-        CREATE TABLE IF NOT EXISTS resumes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            original_name TEXT NOT NULL,
-            stored_name TEXT,
-            file_path TEXT,
-            extracted_text TEXT,
-            resume_data TEXT,
-            template TEXT,
-            is_created BOOLEAN DEFAULT 0,
-            ats_score INTEGER,
-            uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            last_analyzed_at DATETIME
-        );
-
-        CREATE TABLE IF NOT EXISTS analyses (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            resume_id INTEGER NOT NULL,
-            ats_score INTEGER,
-            target_role TEXT,
-            job_match_score INTEGER,
-            job_description TEXT,
-            summary TEXT,
-            strengths TEXT,
-            weaknesses TEXT,
-            missing_skills TEXT,
-            suggestions TEXT,
-            ats_tips TEXT,
-            recommendation TEXT,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (resume_id) REFERENCES resumes (id) ON DELETE CASCADE
-        );
-    `);
-    
-    await dbInstance.exec('PRAGMA foreign_keys = ON;');
+    try {
+        if (!process.env.DATABASE_URL) {
+            throw new Error("DATABASE_URL environment variable is missing.");
+        }
+        await mongoose.connect(process.env.DATABASE_URL);
+        console.log("=========================================");
+        console.log("MongoDB connected successfully");
+        console.log("=========================================");
+    } catch (err) {
+        console.error("=========================================");
+        console.error("MongoDB Connection Error:");
+        console.error(err.message || err);
+        console.error("=========================================");
+    }
 }
 
-initDb().catch(err => {
-    console.error("Failed to initialize database:", err);
+// Initialize connection
+initDb();
+
+// Define Resume Schema
+const resumeSchema = new mongoose.Schema({
+    original_name: { type: String, required: true },
+    stored_name: { type: String },
+    file_path: { type: String },
+    extracted_text: { type: String },
+    resume_data: { type: String },
+    template: { type: String },
+    is_created: { type: Boolean, default: false },
+    ats_score: { type: Number, default: 0 },
+    uploaded_at: { type: Date, default: Date.now },
+    last_analyzed_at: { type: Date },
+    user_id: { type: String, default: '1' }
 });
 
+const Resume = mongoose.model('Resume', resumeSchema);
+
+// Define Analysis Schema
+const analysisSchema = new mongoose.Schema({
+    resume_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Resume', required: true },
+    user_id: { type: String, default: '1' },
+    ats_score: { type: Number, default: 0 },
+    target_role: { type: String },
+    job_match_score: { type: Number },
+    job_description: { type: String },
+    summary: { type: String },
+    strengths: [String],
+    weaknesses: [String],
+    missing_skills: [String],
+    suggestions: [String],
+    ats_tips: [String],
+    recommendation: { type: String },
+    created_at: { type: Date, default: Date.now }
+});
+
+const Analysis = mongoose.model('Analysis', analysisSchema);
+
 module.exports = {
-    getDb: () => dbInstance
+    Resume,
+    Analysis
 };

@@ -1,5 +1,5 @@
 const express = require('express');
-const { getDb } = require('../database');
+const { Analysis } = require('../database');
 const { Resend } = require('resend');
 const puppeteer = require('puppeteer');
 
@@ -23,31 +23,29 @@ router.post('/:id', async (req, res) => {
     }
 
     try {
-        const db = getDb();
-        const analysis = await db.get(`
-            SELECT a.*, r.original_name as resume_name 
-            FROM analyses a
-            JOIN resumes r ON a.resume_id = r.id
-            WHERE a.id = ?
-        `, analysisId);
-
-        if (!analysis) {
+        let analysisDoc = await Analysis.findById(analysisId).populate('resume_id', 'original_name');
+        
+        if (!analysisDoc) {
             return res.status(404).json({ success: false, message: 'Analysis not found' });
         }
+
+        const analysis = {
+            ...analysisDoc.toObject(),
+            resume_name: analysisDoc.resume_id ? analysisDoc.resume_id.original_name : 'Unknown Resume'
+        };
         
         // Mock check for logged-in user (fallback user_id is 1)
         if (analysis.user_id && analysis.user_id !== 1) {
              return res.status(403).json({ success: false, message: 'Unauthorized to send this report' });
         }
 
-        const getList = (jsonStr) => {
-            try {
-                const arr = JSON.parse(jsonStr);
-                if (!arr || arr.length === 0) return '<li>None</li>';
-                return arr.map(i => `<li>${i}</li>`).join('');
-            } catch {
-                return '<li>None</li>';
+        const getList = (arr) => {
+            if (!arr) return '<li>None</li>';
+            if (typeof arr === 'string') {
+                try { arr = JSON.parse(arr); } catch { return '<li>None</li>'; }
             }
+            if (!Array.isArray(arr) || arr.length === 0) return '<li>None</li>';
+            return arr.map(i => `<li>${i}</li>`).join('');
         };
 
         const htmlBody = `

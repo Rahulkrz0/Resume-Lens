@@ -3,7 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const pdfParse = require('pdf-parse');
-const { getDb } = require('../database');
+const { Resume } = require('../database');
 
 const router = express.Router();
 
@@ -22,9 +22,14 @@ const upload = multer({
 
 router.get('/', async (req, res) => {
     try {
-        const db = getDb();
-        const resumes = await db.all('SELECT id, original_name, ats_score, uploaded_at, last_analyzed_at FROM resumes ORDER BY uploaded_at DESC');
-        res.json(resumes);
+        const resumes = await Resume.find().sort({ uploaded_at: -1 }).select('original_name ats_score uploaded_at last_analyzed_at');
+        res.json(resumes.map(r => ({
+            id: r._id,
+            original_name: r.original_name,
+            ats_score: r.ats_score,
+            uploaded_at: r.uploaded_at,
+            last_analyzed_at: r.last_analyzed_at
+        })));
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to fetch resumes' });
@@ -33,12 +38,14 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     try {
-        const db = getDb();
-        const resume = await db.get('SELECT * FROM resumes WHERE id = ?', req.params.id);
+        const resume = await Resume.findById(req.params.id);
         if (!resume) {
             return res.status(404).json({ error: 'Resume not found' });
         }
-        res.json(resume);
+        res.json({
+            ...resume.toObject(),
+            id: resume._id
+        });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to fetch resume' });
@@ -101,17 +108,20 @@ router.post('/upload', (req, res) => {
 
             fs.writeFileSync(filePath, req.file.buffer);
 
-            const db = getDb();
-            const dbResult = await db.run(`
-                INSERT INTO resumes (original_name, stored_name, file_path, extracted_text, user_id) 
-                VALUES (?, ?, ?, ?, 1)
-            `, storedName, filename, filePath, text);
+            const resume = new Resume({
+                original_name: storedName,
+                stored_name: filename,
+                file_path: filePath,
+                extracted_text: text,
+                user_id: '1'
+            });
+            await resume.save();
 
             res.status(201).json({
                 success: true,
                 message: 'Upload successful',
                 resume: {
-                    id: dbResult.lastID,
+                    id: resume._id,
                     filename: storedName,
                     extractedText: text
                 }
@@ -132,17 +142,16 @@ router.post('/upload', (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     try {
-        const db = getDb();
-        const resume = await db.get('SELECT file_path FROM resumes WHERE id = ?', req.params.id);
+        const resume = await Resume.findById(req.params.id);
         if (!resume) {
             return res.status(404).json({ error: 'Resume not found' });
         }
 
-        if (fs.existsSync(resume.file_path)) {
+        if (resume.file_path && fs.existsSync(resume.file_path)) {
             fs.unlinkSync(resume.file_path);
         }
 
-        await db.run('DELETE FROM resumes WHERE id = ?', req.params.id);
+        await Resume.findByIdAndDelete(req.params.id);
         
         res.json({ message: 'Resume deleted successfully' });
     } catch (err) {
@@ -158,9 +167,8 @@ router.put('/:id', async (req, res) => {
     }
 
     try {
-        const db = getDb();
-        const result = await db.run('UPDATE resumes SET original_name = ? WHERE id = ?', original_name, req.params.id);
-        if (result.changes === 0) {
+        const resume = await Resume.findByIdAndUpdate(req.params.id, { original_name });
+        if (!resume) {
             return res.status(404).json({ error: 'Resume not found' });
         }
         res.json({ message: 'Resume renamed successfully' });

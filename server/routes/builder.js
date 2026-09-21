@@ -1,5 +1,5 @@
 const express = require('express');
-const { getDb } = require('../database');
+const { Resume } = require('../database');
 const { GoogleGenAI } = require('@google/genai');
 const puppeteer = require('puppeteer');
 const path = require('path');
@@ -157,15 +157,20 @@ router.post('/save', async (req, res) => {
         const pdfPath = await generatePDF(html, filename);
         const extractedText = stripTags(html);
 
-        const db = getDb();
-        const result = await db.run(`
-            INSERT INTO resumes (original_name, stored_name, file_path, extracted_text, resume_data, template, is_created)
-            VALUES (?, ?, ?, ?, ?, ?, 1)
-        `, `${safeName}_Resume.pdf`, filename, pdfPath, extractedText, JSON.stringify(resumeData), template || 'classic');
+        const resume = new Resume({
+            original_name: `${safeName}_Resume.pdf`,
+            stored_name: filename,
+            file_path: pdfPath,
+            extracted_text: extractedText,
+            resume_data: JSON.stringify(resumeData),
+            template: template || 'classic',
+            is_created: true
+        });
+        await resume.save();
 
         res.status(201).json({
             message: 'Resume saved and PDF generated successfully',
-            resumeId: result.lastID
+            resumeId: resume._id
         });
 
     } catch (err) {

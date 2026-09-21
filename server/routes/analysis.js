@@ -1,6 +1,6 @@
 const express = require('express');
 const { GoogleGenAI } = require('@google/genai');
-const { getDb } = require('../database');
+const { Resume, Analysis } = require('../database');
 
 const router = express.Router();
 
@@ -20,8 +20,7 @@ router.post('/analyze', async (req, res) => {
     }
 
     try {
-        const db = getDb();
-        const resume = await db.get('SELECT extracted_text, user_id FROM resumes WHERE id = ?', resumeId);
+        const resume = await Resume.findById(resumeId).select('extracted_text user_id');
         
         if (!resume) {
             return res.status(404).json({ error: 'Resume not found' });
@@ -101,31 +100,31 @@ Required JSON Structure:
             });
         }
 
-        const result = await db.run(`
-            INSERT INTO analyses (
-                resume_id, user_id, ats_score, target_role, job_match_score, job_description, 
-                summary, strengths, weaknesses, missing_skills, suggestions, ats_tips, recommendation
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `,
-            resumeId,
-            userId,
-            analysisData.atsScore || 0,
-            targetRole || null,
-            analysisData.jobMatchScore || analysisData.atsScore || 0,
-            jobDescription || null,
-            analysisData.summary || '',
-            JSON.stringify(analysisData.strengths || []),
-            JSON.stringify(analysisData.weaknesses || []),
-            JSON.stringify(analysisData.missingSkills || []),
-            JSON.stringify(analysisData.suggestions || []),
-            JSON.stringify(analysisData.atsTips || []),
-            analysisData.recommendation || ''
-        );
+        const newAnalysis = new Analysis({
+            resume_id: resumeId,
+            user_id: userId,
+            ats_score: analysisData.atsScore || 0,
+            target_role: targetRole || null,
+            job_match_score: analysisData.jobMatchScore || analysisData.atsScore || 0,
+            job_description: jobDescription || null,
+            summary: analysisData.summary || '',
+            strengths: analysisData.strengths || [],
+            weaknesses: analysisData.weaknesses || [],
+            missing_skills: analysisData.missingSkills || [],
+            suggestions: analysisData.suggestions || [],
+            ats_tips: analysisData.atsTips || [],
+            recommendation: analysisData.recommendation || ''
+        });
+        
+        await newAnalysis.save();
 
-        await db.run('UPDATE resumes SET last_analyzed_at = CURRENT_TIMESTAMP, ats_score = ? WHERE id = ?', analysisData.atsScore || 0, resumeId);
+        await Resume.findByIdAndUpdate(resumeId, {
+            last_analyzed_at: new Date(),
+            ats_score: analysisData.atsScore || 0
+        });
 
         res.status(201).json({
-            id: result.lastID,
+            id: newAnalysis._id,
             message: 'Analysis complete'
         });
 
@@ -146,26 +145,16 @@ Required JSON Structure:
 
 router.get('/:id', async (req, res) => {
     try {
-        const db = getDb();
-        const analysis = await db.get('SELECT * FROM analyses WHERE id = ?', req.params.id);
+        const analysis = await Analysis.findById(req.params.id);
         
         if (!analysis) {
             return res.status(404).json({ error: 'Analysis not found' });
         }
 
-        ['strengths', 'weaknesses', 'missing_skills', 'suggestions', 'ats_tips'].forEach(field => {
-            if (analysis[field]) {
-                try {
-                    analysis[field] = JSON.parse(analysis[field]);
-                } catch (e) {
-                    analysis[field] = [];
-                }
-            } else {
-                analysis[field] = [];
-            }
+        res.json({
+            ...analysis.toObject(),
+            id: analysis._id
         });
-
-        res.json(analysis);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to fetch analysis' });
@@ -174,26 +163,16 @@ router.get('/:id', async (req, res) => {
 
 router.get('/resume/:resumeId', async (req, res) => {
     try {
-        const db = getDb();
-        const analysis = await db.get('SELECT * FROM analyses WHERE resume_id = ? ORDER BY created_at DESC LIMIT 1', req.params.resumeId);
+        const analysis = await Analysis.findOne({ resume_id: req.params.resumeId }).sort({ created_at: -1 });
         
         if (!analysis) {
             return res.status(404).json({ error: 'No analysis found for this resume' });
         }
 
-        ['strengths', 'weaknesses', 'missing_skills', 'suggestions', 'ats_tips'].forEach(field => {
-            if (analysis[field]) {
-                try {
-                    analysis[field] = JSON.parse(analysis[field]);
-                } catch (e) {
-                    analysis[field] = [];
-                }
-            } else {
-                analysis[field] = [];
-            }
+        res.json({
+            ...analysis.toObject(),
+            id: analysis._id
         });
-
-        res.json(analysis);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to fetch analysis' });
@@ -202,13 +181,15 @@ router.get('/resume/:resumeId', async (req, res) => {
 
 router.get('/history/all', async (req, res) => {
     try {
-        const db = getDb();
-        const history = await db.all(`
-            SELECT a.id, a.resume_id, a.ats_score, a.target_role, a.created_at, r.original_name as resume_name 
-            FROM analyses a
-            JOIN resumes r ON a.resume_id = r.id
-            ORDER BY a.created_at DESC
-        `);
+        const analyses = await Analysis.find().populate('resume_id', 'original_name').sort({ created_at: -1 });
+        const history = analyses.map(a => ({
+            id: a._id,
+            resume_id: a.resume_id ? a.resume_id._id : null,
+            ats_score: a.ats_score,
+            target_role: a.target_role,
+            created_at: a.created_at,
+            resume_name: a.resume_id ? a.resume_id.original_name : 'Unknown Resume'
+        }));
         
         res.json(history);
     } catch (err) {

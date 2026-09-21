@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
-const { getDb } = require('./database');
+const { Resume } = require('./database');
 
 const resumesRoutes = require('./routes/resumes');
 const analysisRoutes = require('./routes/analysis');
@@ -24,28 +24,38 @@ app.use('/api/email', emailRoutes);
 
 app.get('/api/dashboard/stats', async (req, res) => {
     try {
-        const db = getDb();
-        const stats = await db.get(`
-            SELECT 
-                COUNT(*) as total_resumes,
-                COUNT(ats_score) as analyzed,
-                AVG(ats_score) as average_score
-            FROM resumes
-        `);
+        const totalResumes = await Resume.countDocuments();
+        const analyzedResumes = await Resume.countDocuments({ ats_score: { $gt: 0 } });
+        
+        const avgScoreResult = await Resume.aggregate([
+            { $match: { ats_score: { $gt: 0 } } },
+            { $group: { _id: null, avgScore: { $avg: '$ats_score' } } }
+        ]);
+        const averageScore = avgScoreResult.length > 0 ? Math.round(avgScoreResult[0].avgScore) : '-';
 
-        const recentActivity = await db.all(`
-            SELECT 'Analyzed resume: ' || original_name as activity_text, last_analyzed_at as date 
-            FROM resumes WHERE last_analyzed_at IS NOT NULL
-            UNION
-            SELECT CASE WHEN is_created = 1 THEN 'Created a new resume: ' ELSE 'Uploaded resume: ' END || original_name as activity_text, uploaded_at as date 
-            FROM resumes
-            ORDER BY date DESC LIMIT 5
-        `);
+        const rawResumes = await Resume.find().sort({ uploaded_at: -1 }).limit(10);
+        
+        let activityList = [];
+        for (const r of rawResumes) {
+            if (r.last_analyzed_at) {
+                activityList.push({
+                    activity_text: 'Analyzed resume: ' + r.original_name,
+                    date: r.last_analyzed_at
+                });
+            }
+            activityList.push({
+                activity_text: (r.is_created ? 'Created a new resume: ' : 'Uploaded resume: ') + r.original_name,
+                date: r.uploaded_at
+            });
+        }
+        
+        activityList.sort((a, b) => new Date(b.date) - new Date(a.date));
+        const recentActivity = activityList.slice(0, 5);
 
         res.json({
-            totalResumes: stats.total_resumes || 0,
-            averageScore: stats.average_score ? Math.round(stats.average_score) : '-',
-            analyzedResumes: stats.analyzed || 0,
+            totalResumes: totalResumes || 0,
+            averageScore: averageScore,
+            analyzedResumes: analyzedResumes || 0,
             recentActivity: recentActivity
         });
     } catch (err) {
