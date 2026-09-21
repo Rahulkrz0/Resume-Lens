@@ -183,7 +183,7 @@ async function sendEmailReport() {
         msgDiv.textContent = 'Sending report...';
         msgDiv.style.color = 'var(--brand-cta)';
 
-        const response = await fetch(`/api/email/${currentAnalysisId}`, {
+        const response = await fetch(API_BASE_URL + `/api/email/${currentAnalysisId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email })

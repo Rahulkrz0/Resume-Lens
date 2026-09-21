@@ -1,9 +1,12 @@
 // Common utility functions
 
 // API Fetch wrapper
+const API_BASE_URL = 'https://resume-lens-ogky.onrender.com';
+
 async function apiRequest(url, options = {}) {
+    const fullUrl = url.startsWith('/') ? `${API_BASE_URL}${url}` : url;
     try {
-        const response = await fetch(url, {
+        const response = await fetch(fullUrl, {
             ...options,
             headers: {
                 'Content-Type': 'application/json',

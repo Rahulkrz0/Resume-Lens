@@ -265,7 +265,7 @@ async function saveResume(download) {
 
         alert("Resume saved successfully!");
         if (download) {
-            window.location.href = `/api/resumes`; // Note: A separate download route would be better, but we can just redirect to resumes page where they can see it.
+            window.location.href = `/resumes.html`;
             window.location.href = '/resumes.html';
         } else {
             window.location.href = '/resumes.html';

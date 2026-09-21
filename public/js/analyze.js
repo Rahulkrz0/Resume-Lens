@@ -45,7 +45,7 @@ async function handleAutoUpload() {
         const formData = new FormData();
         formData.append('file', fileInput.files[0]);
 
-        const res = await fetch('/api/resumes/upload', {
+        const res = await fetch(API_BASE_URL + '/api/resumes/upload', {
             method: 'POST',
             body: formData
         });
